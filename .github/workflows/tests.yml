@@ -1,0 +1,54 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'php/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'php/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        php-version: ['8.2', '8.3']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring
+        coverage: xdebug
+    
+    - name: Validate composer.json and composer.lock
+      run: cd php && composer validate --strict
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: php/vendor
+        key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-${{ matrix.php-version }}-
+    
+    - name: Install dependencies
+      run: cd php && composer install --prefer-dist --no-progress
+    
+    - name: Run test suite
+      run: cd php && composer test
+    
+    - name: Run PHPStan
+      run: cd php && composer phpstan
+    
+    - name: Check code style
+      run: cd php && composer cs-check
+

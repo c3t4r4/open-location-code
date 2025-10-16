@@ -1,0 +1,31 @@
+# Composer
+/vendor/
+composer.lock
+
+# PHPPest
+.pest.cache/
+.pest.result.cache
+coverage/
+
+# PHPUnit
+.phpunit.cache/
+.phpunit.result.cache
+coverage/
+
+# PHPStan
+.phpstan.cache/
+.phpstan.result.cache
+coverage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+build/
+dist/
+
